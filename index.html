@@ -67,7 +67,7 @@ document.getElementById('emailForm').addEventListener('submit', function(e) {
     const email = document.getElementById('email').value;
     console.log('인증 메일 요청:', email);
     
-    fetch("http://127.0.0.1:3000/send-verification", {
+    fetch("http://127.0.0.1:3000/api/auth/sendVerification", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -92,6 +92,25 @@ document.getElementById('emailForm').addEventListener('submit', function(e) {
             const code = document.getElementById('verificationCode').value;
             console.log('인증 코드 확인:', code);
             // 여기에 인증 코드 확인 API 호출 로직 추가
+            fetch("http://127.0.0.1:3000/api/auth/verify", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            title: "test",
+            email: email,
+            code: code
+        }),
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Fetch error:', error));
         });
     </script>
 </body>

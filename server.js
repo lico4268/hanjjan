@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
+process.env.TZ = "Asia/Seoul";
 // 라우트 파일 임포트
 const authRoutes = require('./src/routes/authRoutes');
 //const userRoutes = require('./src/routes/userRoutes');
