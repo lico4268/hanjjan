@@ -92,7 +92,7 @@ router.post('/send-verification', async(req,res)=>{
       try{
         connection = await pool.getConnection();
         const [result] = await connection.query(
-          'update authTemp set verificationCode = ? where email = ?;',[verificationCode,email]);
+          'update authTemp set verificationCode = ?, createdAt = current_timestamp where email = ?;',[verificationCode,email]);
         
         res.status(200).json({message:"인증코드 갱신"});
       }catch(err){
@@ -158,41 +158,33 @@ router.post('/verify', async (req, res) => {
         console.log(error);
       }
 
-      const createdAt = moment(res_row.createdAt);
+      const createdAt = moment(res_row.createdAt); 
       const now = moment();
-      const diff = moment.duration(now.diff(createdAt));
 
-      const diffhours = Math.floor(diff.asHours());
-      const diffminutes = Math.floor(diff.asMinutes()) % 60;
+      // db 에 저장된 시간과 현재 시간 차이 계산
+      const diff = moment.duration(now.diff(createdAt)); 
       
-      // const timeDifference = (currentTime - createdTime)/1000/60; // 분단위 계산
-      console.log(diffhours);
-      console.log(diffminutes);
-      console.log(diff.asMinutes());
-      console.log(res_row);
-
-      // res.status(200).json({message:"asdf"});
-      
+      // 인증 코드 몇분 후 만료
       if(diff.asMinutes() >3){
         return res.status(400).json({message:"인증코드 만료"})
       }
 
-      if (result.verificationCode === code) {
+      if (res_row.verificationCode === code) {
         // delete verificationCodes[email]; // 인증 후 코드 삭제
-        res.status(200).json({message:"인증완료"})
+        
         try{
           const conn = await pool.getConnection();
   
           const [result] = await conn.query("update authTemp set verified = ? where email = ?",[1,email]);
-          [res_row] = result;
           conn.release();
-  
+          return res.status(200).json({message:"인증완료"});
+
         } catch(error){
           console.log(error);
         }
 
       } else {
-        res.status(400).json({message:"잘못된 코드 입력"})
+        return res.status(400).json({message:"잘못된 코드 입력"});
       }
 
   });
