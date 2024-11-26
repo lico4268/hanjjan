@@ -45,7 +45,7 @@ app.post("/login", async(req,res)=>{
   const connection = await pool.getConnection();
 
   const [results] = await connection.query(
-    "SELECT * FROM  user WHERE  email = ?;" ,[email]);
+    "SELECT * FROM  user WHERE  userid = ?;" ,[email]);
 
     if(results.length === 0 ){
       return res.status(401)({message : "존재하지 않는 사용자입니다."});
