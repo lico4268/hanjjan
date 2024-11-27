@@ -22,8 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // 라우트 설정
 app.use('/api/auth', authRoutes); // 이메일 인증
-//app.use('/api/users', userRoutes); // 유저 정보 관련 api
 //app.use('/api/meetings', meetingRoutes);
+//app.use('/api/users', userRoutes); // 유저 정보 관련 api
 //app.use('/api/ratings', ratingRoutes);
 
 // 기본 라우트
