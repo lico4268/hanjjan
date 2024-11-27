@@ -1,27 +1,43 @@
 const express = require('express');
+const session = require('express-session');
 const pool = require('../config/database');
 const router = express.Router();
 
+function toMysqlFormat(date) {
+  return date.getUTCFullYear() + "-" + 
+         twoDigits(1 + date.getUTCMonth()) + "-" + 
+         twoDigits(date.getUTCDate()) + " " + 
+         twoDigits(date.getHours()) + ":" + 
+         twoDigits(date.getUTCMinutes()) + ":" + 
+         twoDigits(date.getUTCSeconds());
+}
+
 router.post('/create', async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
   
     const { userId, place, tag, content, threadtime, maxParticipants } = req.body;
-    const createdAt = new Date();
+    if (!userId || !place || !tag|| !content || !threadtime || !maxParticipants) {
+      return res.status(400).json({ message: '필수 필드가 누락되었습니다.' });
+  }
+    console.log(typeof threadtime);
+    const createdAt = new Date(threadtime);
   
     try {
       const connection = await pool.getConnection();
       const [result] = await connection.execute(
-        'INSERT INTO threads(writerid, place, content, tag, threadtime, maxParticipants) VALUES (?, ?, ?, ?, ?, ?)',
-        [userid, place, content, tag, threadtime, maxParticipants]
+        'INSERT INTO thread(writerid, place, content, tag, threadtime, maxParticipants) VALUES (?, ?, ?, ?, ?, ?)',
+        [userId, place, content, tag, createdAt, parseInt(maxParticipants)]
       );
+      // console.log(result);
       connection.release();
   
       res.status(200).json({
         message: '요청 쓰레드가 성공적으로 생성되었습니다.',
-        threadId: result.insertId
+        threadId: result.insertId,
+        createdThread : req.body
       });
     } catch (error) {
       console.error('쓰레드 생성 오류:', error);
@@ -29,7 +45,7 @@ router.post('/create', async (req, res) => {
     }
   });
 
-  router.get("list",async(req,res)=>{
+  router.get("/list",async(req,res)=>{
     try{
       const conn = await pool.getConnection();
       const [rows] = await conn.execute(
