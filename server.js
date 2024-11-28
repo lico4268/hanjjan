@@ -5,7 +5,7 @@ process.env.TZ = "Asia/Seoul";
 // 라우트 파일 임포트
 const authRoutes = require('./src/routes/authRoutes');
 const loginRoutes = require('./src/routes/loginRoutes');
-//const userRoutes = require('./src/routes/userRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 const meetingRoutes = require('./src/routes/meetingRoutes');
 //const ratingRoutes = require('./src/routes/ratingRoutes');
 
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 // 라우트 설정
 app.use('/api/auth', authRoutes); // 이메일 인증
 app.use('/api/users',loginRoutes);
-//app.use('/api/users', userRoutes); // 유저 정보 관련 api
+app.use('/api/users', userRoutes); // 유저 정보 관련 api
 app.use('/api/thread', meetingRoutes);
 
 // 기본 라우트
