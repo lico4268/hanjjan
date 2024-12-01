@@ -99,7 +99,7 @@ app.post("/login", async(req,res)=>{
 
   console.log(user_row);
 
-  const check = await bcrypt.compare(password,user_row.userpassword);
+  const check = await bcrypt.compare(user_row.userpassword,password);
 
   console.log(" password check:" , check)
   if (!check){
