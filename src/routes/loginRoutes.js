@@ -98,6 +98,7 @@ app.post("/login", async(req,res)=>{
   const [user_row]  = results;
 
   console.log(user_row);
+  console.log(user_row.userpassword)
 
   const check = await bcrypt.compare(user_row.userpassword,password);
 
