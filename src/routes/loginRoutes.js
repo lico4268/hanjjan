@@ -94,16 +94,19 @@ app.post("/login", async(req,res)=>{
     }
 
   const [user]  = results;
-  
+
   console.log(user);
 
   const check = await bcrypt.compare(password,user.userpassword);
+
+  console.log(" password check:" , check)
   if (!check){
       return res.status(400).json({ message: "아이디 또는 비밀번호를 잘못입력하셨습니다." });
   }
 
     res.status(200).json({message : "로그인 성공"});
-    connection.release();
+    conn.release();
+
   } catch (err){
     console.log(err);
     return res.status(500).json({message:"서버 오류"});
