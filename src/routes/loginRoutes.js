@@ -78,23 +78,24 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async(req,res)=>{
   const { email ,password } = req.body;
-
+  console.log(password);
   try{
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email과 PW를 입력하세요." });
   }
+    const conn = await pool.getConnection();
 
-  const conn = await pool.getConnection();
-
-  const [results] = await conn.query(
-    "SELECT * FROM  user WHERE  email = ?;" ,[email]);
+    const [results] = await conn.query(
+      "SELECT * FROM user WHERE  email = ?;" ,[email]);
 
   if(results.length === 0 ){
     return res.status(401)({message : "존재하지 않는 사용자입니다."});
     }
 
-  const user  = results[0];
+  const [user]  = results;
+  
+  console.log(user);
 
   const check = await bcrypt.compare(password,user.userpassword);
   if (!check){
