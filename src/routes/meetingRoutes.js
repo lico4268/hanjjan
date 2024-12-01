@@ -60,34 +60,20 @@ router.post('/create', async (req, res) => {
     }
   });
 
-  router.get("/list", async (req, res) => {
-    const { time, place, content } = req.query;
-
-    let sql = `
-        SELECT writerid, place, content, tag, threadtime, maxParticipants, creationTime
-        FROM thread
-    `;
-    const conditions = [];
-    const params = [];
-
-    if (time) {
-        conditions.push("threadtime > ?");
-        params.push(time);
+  router.get("/list",async(req,res)=>{
+    try{
+      const conn = await pool.getConnection();
+      const [rows] = await conn.execute(
+        'SELECT writerid, place,content, tag, threadtime, maxParticipants, creationTime FROM thread ORDER BY creationTime DESC'
+      );
+      conn.release();
+      res.status(200).json({
+        message:'요청 조회 성공',
+        thread: rows
+      })
+    } catch(error){
+      console.log("글 목록 조회 오류", error);
+      res.status(500).json({message:'error on server'})
     }
-    if (place) {
-        conditions.push("place = ?");
-        params.push(place);
-    }
-    if (content) {
-        conditions.push("content = ?");
-        params.push(content);
-    }
-
-    if (conditions.length > 0) {
-        sql += " WHERE " + conditions.join(" AND ");
-    }
-    sql += " ORDER BY creationTime DESC";
-
-    await executeQuery(sql, params, res);
-});
+  });
   module.exports = router;

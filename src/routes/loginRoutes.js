@@ -45,7 +45,7 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const conn = await pool.getConnection();
-    const registrationDate = toMysqlFormat(new Date());
+    // const registrationDate = toMysqlFormat(new Date());
 
     let username = generateUsername(email.split('@')[0]);
     let isUnique = false;
@@ -62,8 +62,8 @@ app.post("/register", async (req, res) => {
     }
 
     const [result] = await conn.query(
-      'INSERT INTO user(userid,username,userpassword,email,userscore,registrationDate,userprofile) VALUES(?,?,?,?,?,?);',
-      [userid,username,hashedPassword,email,0,registrationDate,null]
+      'INSERT INTO user(userid,username,userpassword,email) VALUES(?,?,?,?);',
+      [userid,username,hashedPassword,email]
     );
 
     return res.status(201).json({message:"회원 가입 성공"});
