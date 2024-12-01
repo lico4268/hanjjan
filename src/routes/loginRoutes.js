@@ -71,11 +71,10 @@ app.post("/login", async(req,res)=>{
     }
 
     res.status(200).json({message : "로그인 성공"});
+    connection.release();
   } catch (err){
     console.log(err);
     return res.status(500).json({message:"서버 오류"});
-  } finally{
-    if (connection) connection.release();
   }
 });
 
