@@ -78,7 +78,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async(req,res)=>{
   const { email ,password } = req.body;
-  console.log(password);
+  // console.log(password);
   try{
 
     if (!email || !password) {
@@ -97,8 +97,8 @@ app.post("/login", async(req,res)=>{
 
   const [user_row]  = results;
 
-  console.log(user_row);
-  console.log(user_row.userpassword)
+  // console.log(user_row);
+  // console.log(user_row.userpassword)
 
   const check = await bcrypt.compare(password,user_row.userpassword);
 
