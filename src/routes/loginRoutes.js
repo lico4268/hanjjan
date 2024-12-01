@@ -89,15 +89,17 @@ app.post("/login", async(req,res)=>{
     const [results] = await conn.query(
       "SELECT * FROM user WHERE  email = ?;" ,[email]);
 
+    conn.release();
+
   if(results.length === 0 ){
     return res.status(401)({message : "존재하지 않는 사용자입니다."});
     }
 
-  const [user]  = results;
+  const [user_row]  = results;
 
-  console.log(user);
+  console.log(user_row);
 
-  const check = await bcrypt.compare(password,user.userpassword);
+  const check = await bcrypt.compare(password,user_row.userpassword);
 
   console.log(" password check:" , check)
   if (!check){
@@ -105,7 +107,7 @@ app.post("/login", async(req,res)=>{
   }
 
     res.status(200).json({message : "로그인 성공"});
-    conn.release();
+    
 
   } catch (err){
     console.log(err);
