@@ -14,12 +14,40 @@ app.post('/update',async(req,res)=>{
             [userprofile,userid] 
         );
 
-        if (result.length === 0) {
+        if (result.affectedRows === 0) {
             return res.status(404).json({ message: '해당 사용자를 찾을 수 없습니다.' });
           }
 
         conn.release();
         res.status(200).json({ message: '프로필이 성공적으로 업데이트되었습니다.' });
+    } catch (err){
+        console.log(err);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });    
+    }
+
+
+});
+
+app.post('/get-user',async(req,res)=>{
+    const {userid} = req.body;
+    const conn = await pool.getConnection();
+
+    try{
+        const [result] = await conn.query(
+            "select userscore,email,userprofile from user WHERE userid = ?",
+            [userid] 
+        );
+
+        if (result.length === 0) {
+            return res.status(404).json({ message: '해당 사용자를 찾을 수 없습니다.' });
+          }
+
+        conn.release();
+        res.status(200).json({
+            message:'유저 정보 조회 성공',
+            thread: result
+        });
+
     } catch (err){
         console.log(err);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });    
