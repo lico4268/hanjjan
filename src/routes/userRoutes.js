@@ -14,7 +14,7 @@ app.post('/update',async(req,res)=>{
             [userprofile,userid] 
         );
 
-        if (result.length() === 0) {
+        if (result.length === 0) {
             return res.status(404).json({ message: '해당 사용자를 찾을 수 없습니다.' });
           }
 
